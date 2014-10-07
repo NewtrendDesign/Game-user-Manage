@@ -41,13 +41,13 @@ $_SESSION["member_type"]=$row[0];
 $_SESSION["member_user"]=$name;
 
 //echo $_SESSION["member_type"];
-//echo '<br /><a href="http://localhost/wordpress/JEasyUI/User-and-Email-Reply/index.php">index</a>';
+//echo '<br /><a href="http://localhost/wordpress/JEasyUI/User-and-Email-Reply/main.php">index</a>';
 
 //mysql_num_rowsPHP函数，取查询结果集当中行的数目.命令只对SELECT语句有效。
 $rows = mysql_num_rows($res);
 if($rows){
 //如果用户名密码匹配正确则成功跳转页面，否则退回登录页面
-echo "<script>location.href='http://localhost/wordpress/JEasyUI/User-and-Email-Reply/index.php';</script>";
+echo "<script>location.href='http://localhost/wordpress/JEasyUI/User-and-Email-Reply/main.php';</script>";
 exit;
 }else{
 echo "<script language=javascript charset= \"utf-8\">alert('UserName or Password Error!Please Rerty again!');history.back(); </script>";}

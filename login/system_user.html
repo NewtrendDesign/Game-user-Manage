@@ -1,0 +1,168 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="keywords" content="jquery,ui,easy,easyui,web">
+	<meta name="description" content="easyui help you build your web page easily!">
+	<title>jQuery EasyUI CRUD Demo - System User</title>
+	<link rel="stylesheet" type="text/css" href="../jquery-easyui-1.4/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="../jquery-easyui-1.4/themes/icon.css">
+	<link rel="stylesheet" type="text/css" href="../jquery-easyui-1.4/demo/demo.css">
+	<style type="text/css">
+		#fm{
+			margin:0;
+			padding:10px 30px;
+		}
+		.ftitle{
+			font-size:14px;
+			font-weight:bold;
+			color:#666;
+			padding:5px 0;
+			margin-bottom:10px;
+			border-bottom:1px solid #ccc;
+		}
+		.fitem{
+			margin-bottom:5px;
+		}
+		.fitem label{
+			display:inline-block;
+			width:80px;
+		}
+	</style>
+	<script type="text/javascript" src="../jquery-easyui-1.4/jquery.min.js"></script>
+	<script type="text/javascript" src="../jquery-easyui-1.4/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="../jquery-easyui-1.4/local/easyui-lang-zh_CN.js"></script>
+	<script type="text/javascript">
+		var url;
+		function newUser(){
+			$('#dlg').dialog('open').dialog('setTitle','创建新用户');
+			$('#fm').form('clear');
+			url = 'save_system_user.php';
+		}
+		function editUser(){
+			var row = $('#dg').datagrid('getSelected');
+			if (row){
+				$('#dlg').dialog('open').dialog('setTitle','修改用户信息');
+				$('#fm').form('load',row);
+				url = 'update_system_user.php?id='+row.id;
+			}
+		}
+		function saveUser(){
+			$('#fm').form('submit',{
+				url: url,
+				onSubmit: function(){
+					return $(this).form('validate');
+				},
+				success: function(result){
+					var result = eval('('+result+')');
+					if (result.success){
+						$('#dlg').dialog('close');		// close the dialog
+						$('#dg').datagrid('reload');	// reload the user data
+					} else {
+						$.messager.show({
+							title: 'Error',
+							msg: result.msg
+						});
+					}
+				}
+			});
+		}
+		function removeUser(){
+			var row = $('#dg').datagrid('getSelected');
+			if (row){
+				$.messager.confirm('提示信息','确定删除当前用户?',function(r){
+					if (r){
+						$.post('remove_system_user.php',{id:row.member_id},function(result){
+							if (result.success){
+								$('#dg').datagrid('reload');	// reload the user data
+							} else {
+								$.messager.show({	// show error message
+									title: 'Error',
+									msg: result.msg
+								});
+							}
+						},'json');
+					}
+				});
+			}
+		}
+	</script>
+		<script type="text/javascript">
+		$(function(){
+			$('#cc').combo({
+				required:true,
+				editable:false
+			});
+			$('#sp').appendTo($('#cc').combo('panel'));
+			$('#sp input').click(function(){
+				var v = $(this).val();
+				var s = $(this).next('span').text();
+				$('#cc').combo('setValue', v).combo('setText', s).combo('hidePanel');
+			});
+		});
+	</script>
+</head>
+<body>
+
+	<div style="margin-top:10px;"></div>
+	<div style="width:600px;"><img src="../jquery-easyui-1.4/themes/icons/tip.png">选择系统用户记录,点击工具栏上的创建、编辑、删除等按钮进行相应的操作</div>
+	<div style="margin-top:10px;";"></div>
+	<!--End--> 	
+	
+	<!--系统用户表-->
+	<table id="dg" title="用户管理" class="easyui-datagrid" style="width:700px;height:380px"
+			url="get_system_users.php"
+			toolbar="#toolbar" pagination="true"
+			rownumbers="false" fitColumns="true" singleSelect="true">
+		<thead>
+			<tr>
+				<th field="member_id" width="50">ID</th>
+				<th field="member_name" width="60">名称</th>
+				<th field="member_password" width="30">密码</th>
+				<th field="member_type" width="50">类型</th>
+				<th field="member_active" width="50">状态</th>	
+				<th field="create_time" width="100">创建时间</th>		
+			</tr>
+		</thead>
+	</table><!--End-->
+	
+	<!--工具按钮-->	
+	<div id="toolbar">
+		<a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newUser()">创建</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editUser()">编辑</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="removeUser()">删除</a>
+	</div><!--End-->
+	
+	<!--用户信息编辑对话框-->
+	<div id="dlg" class="easyui-dialog" style="width:440px;height:300px;padding:10px 20px"
+			closed="true" buttons="#dlg-buttons">
+			
+		<div class="ftitle">用户信息</div>
+		
+		<form id="fm" method="post" novalidate>
+			<div class="fitem">
+				<label>用户名称:</label>
+				<input name="member_name" class="easyui-validatebox" required="true">
+			</div>
+			<div class="fitem">
+				<label>用户密码:</label>
+				<input name="member_password" class="easyui-validatebox" required="true">
+			</div>
+			<div class="fitem">
+				<label>用户类型:</label>
+				<input name="member_type" class="easyui-validatebox" required="true">
+			</div>
+			<div class="fitem">
+				<label>是否激活:</label>
+				<input name="member_active" class="easyui-validatebox" required="true">
+			</div>
+		</form>
+	</div><!--End-->
+	
+	<!--对话框按钮-->
+	<div id="dlg-buttons">
+		<a href="#" class="easyui-linkbutton" iconCls="icon-ok" onclick="saveUser()">确定</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')">取消</a>
+	</div><!--end-->
+</body>
+</html>

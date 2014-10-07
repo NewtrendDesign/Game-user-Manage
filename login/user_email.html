@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="keywords" content="jquery,ui,easy,easyui,web">
+	<meta name="description" content="easyui help you build your web page easily!">
+	<title>jQuery EasyUI CRUD Demo - System User</title>
+	<link rel="stylesheet" type="text/css" href="../jquery-easyui-1.4/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="../jquery-easyui-1.4/themes/icon.css">
+	<link rel="stylesheet" type="text/css" href="../jquery-easyui-1.4/demo/demo.css">
+	<style type="text/css">
+		#fm{
+			margin:0;
+			padding:10px 30px;
+		}
+		.ftitle{
+			font-size:14px;
+			font-weight:bold;
+			color:#666;
+			padding:5px 0;
+			margin-bottom:10px;
+			border-bottom:1px solid #ccc;
+		}
+		.fitem{
+			margin-bottom:5px;
+		}
+		.fitem label{
+			display:inline-block;
+			width:80px;
+		}
+	</style>
+	<script type="text/javascript" src="../jquery-easyui-1.4/jquery.min.js"></script>
+	<script type="text/javascript" src="../jquery-easyui-1.4/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="../jquery-easyui-1.4/local/easyui-lang-zh_CN.js"></script>
+	<script type="text/javascript">
+		var url;
+		function newEmail(){
+			$('#dlg').dialog('open').dialog('setTitle','写新邮信');
+			$('#fm').form('clear');
+			url = 'save_new_email.php';
+		}
+		function readEmail(){
+			var row = $('#dg').datagrid('getSelected');
+			if (row){
+				$('#dlg').dialog('open').dialog('setTitle','阅读信件');
+				$('#fm').form('load',row);
+				url = 'update_game_user_email.php?mail_id='+row.mail_id;
+			}
+		}
+		function saveEmail(){
+			$('#fm').form('submit',{
+				url: url,
+				onSubmit: function(){
+					return $(this).form('validate');
+				},
+				success: function(result){
+					var result = eval('('+result+')');
+					if (result.success){
+						$('#dlg').dialog('close');		// close the dialog
+						$('#dg').datagrid('reload');	// reload the user data
+					} else {
+						$.messager.show({
+							title: 'Error',
+							msg: result.msg
+						});
+					}
+				}
+			});
+		}
+		function removeEmail(){
+			var row = $('#dg').datagrid('getSelected');
+			if (row){
+				$.messager.confirm('提示信息','确定删除当前邮件?',function(r){
+					if (r){
+						$.post('remove_game_user_email.php',{id:row.mail_id},function(result){
+							if (result.success){
+								$('#dg').datagrid('reload');	// reload the user data
+							} else {
+								$.messager.show({	// show error message
+									title: 'Error',
+									msg: result.msg
+								});
+							}
+						},'json');
+					}
+				});
+			}
+		}
+	</script>
+		<script type="text/javascript">
+		$(function(){
+			$('#cc').combo({
+				required:true,
+				editable:false
+			});
+			$('#sp').appendTo($('#cc').combo('panel'));
+			$('#sp input').click(function(){
+				var v = $(this).val();
+				var s = $(this).next('span').text();
+				$('#cc').combo('setValue', v).combo('setText', s).combo('hidePanel');
+			});
+		});
+	</script>
+</head>
+<body>
+
+	<div style="margin-top:10px;"></div>
+	<div style="width:600px;"><img src="../jquery-easyui-1.4/themes/icons/tip.png">请选择收取到的邮件记录,然后点击工具栏上的阅读、回复、删除等按钮进行相应的操作</div>
+	<div style="margin-top:10px;";"></div>
+
+	<!--End of Table Hint--> 	
+	
+	<table id="dg" title="邮件管理" class="easyui-datagrid" style="width:700px;height:380px"
+			url="get_user_email.php"
+			toolbar="#toolbar" pagination="true"
+			rownumbers="false" fitColumns="true" singleSelect="true">
+		<thead>
+			<tr>
+				<th field="mail_id" width="30">邮件ID</th>
+				<th field="sender_id" width="40">发信人</th>
+				<th field="reader_id" width="40">收信人</th>
+				<th field="mail_title" width="100">标题</th>
+				<th field="send_time" width="70">发送时间</th>	
+				<th field="read_mark" width="40">阅读标记</th>		
+			</tr>
+		</thead>
+	</table>	
+	<!--End of Datagrid Table-->
+	
+	<div id="toolbar">
+
+		<a href="#" class="easyui-linkbutton" iconCls="icon-email-add" plain="true" onclick="newEmail()">写信</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-email-open" plain="true" onclick="readEmail()">阅读</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-email-edit" plain="true" onclick="editUser()">回复</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="removeEmail()">删除</a>
+	</div>		
+	<!--End of Toolbar-->
+	
+	<div id="dlg" class="easyui-dialog" style="width:440px;height:300px;padding:10px 20px"
+			closed="true" buttons="#dlg-buttons">
+		<div class="ftitle">信件内容</div>
+		<form id="fm" method="post" novalidate>
+			<div class="fitem">
+				<label>发信人:</label>
+				<input name="sender_id" class="easyui-validatebox" required="true">
+			</div>
+			<div class="fitem">
+				<label>收信人:</label>
+				<input name="reader_id" class="easyui-validatebox" required="true">
+			</div>
+			<div class="fitem">
+				<label>邮件标题:</label>
+				<input name="mail_title" class="easyui-validatebox" required="true">
+			</div>
+			<div class="fitem">
+				<label>邮件内容:</label>
+				<input name="mail_content" class="easyui-validatebox" required="true">
+			</div>
+		</form>
+	</div>		<!--End of dlg-->
+	
+	<div id="dlg-buttons">
+		<a href="#" class="easyui-linkbutton" iconCls="icon-ok" onclick="saveEmail()">确定</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')">取消</a>
+	</div><!--dlg-buttons-->
+</body>
+</html>
