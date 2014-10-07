@@ -17,5 +17,5 @@ CREATE TABLE `game_user_email`
   `delete_mark`		ENUM('False','True') NOT NULL DEFAULT 'False',  
   FOREIGN KEY (`sender_id`) REFERENCES `game_user`(`user_id`) on update cascade on delete cascade,
   FOREIGN KEY (`reader_id`) REFERENCES `game_user`(`user_id`) on update cascade on delete cascade
-);
+)ENGINE=InnoDB;
 #@ _CREATE_TABLE_
