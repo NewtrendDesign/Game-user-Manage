@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">	
+	<title>登录页</title>	
+	<style type="text/css">
+		table {border: 3px double;background-color:#eeeeee;}
+		.textinput {width:160px}
+		.btn {width:80px}
+		#center {	
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		margin-top: -200px;
+		margin-left: -200px;}
+	</style>	
+	<script language="javascript">
+	function doCheck(){
+	    if(document.frmLogin.username.value==""){
+	        alert('请输入你的用户名！');
+	        return false;
+	    }
+	    if(document.frmLogin.password.value==""){
+	        alert('请输入你的密码！');
+	        return false;
+	    }
+	}
+	</script>
+</head>
+<body>
+	<div id="center">
+		<form name="frmLogin" method="post" action="login.php" onSubmit="return doCheck();" >
+		<table border="1" cellpadding="10" width="350" align="center">
+			<tr><td colspan="2" align="left">用户名：</td>
+				<td><input name="username" type="text" id="username" class="textinput" /></td>
+			</tr>
+			<tr><td colspan="2" align="left">密码：</td>
+			    <td><input name="password" type="password" id="password" class="textinput" /></td>
+			</tr>
+			<tr><td  colspan="2" align="left"></td>
+				<td><input type="submit" class="btn" value="登录">
+					<input type="reset" class="btn" value="重置"></td>
+			</tr>
+		</table>
+		</form>
+	</div>
+</body>
+</html>
