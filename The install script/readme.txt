@@ -1,11 +1,12 @@
 ======================================
 
-MySQL系统当中导入sql的命令行如下：
+MySQL系统当中导入sql的命令行如下:
+Import the sql files in MySQL SHELL:
 
-source  "路径名"+*/*.sql
+source  "Pathname"+*/*.sql
 
 ======================================
-首先登录MySQL 
+首先登录MySQL /Login MySQL
 
 c:\>mysql -u root -p
 	
